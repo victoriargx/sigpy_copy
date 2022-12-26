@@ -1790,7 +1790,9 @@ class Slice(Linop):
         super().__init__(oshape, ishape)
 
     def _apply(self, input):
-        return input[self.idx]
+        device = backend.get_device(input)
+        with device:
+            return input[self.idx]
 
     def _adjoint_linop(self):
         return Embed(self.ishape, self.idx)
@@ -1813,8 +1815,13 @@ class Embed(Linop):
         super().__init__(oshape, ishape)
 
     def _apply(self, input):
-        output = np.zeros(self.oshape, dtype=input.dtype)
-        output[self.idx] = input
+        device = backend.get_device(input)
+        xp = device.xp
+
+        with device:
+            output = xp.zeros(self.oshape, dtype=input.dtype)
+            output[self.idx] = input
+
         return output
 
     def _adjoint_linop(self):
