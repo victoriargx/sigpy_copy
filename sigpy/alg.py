@@ -271,9 +271,10 @@ class ConjugateGradient(Alg):
                 self.rzold = rznew
 
             self.resid = self.rzold.item()**0.5
-            
+
             if self.verbose:
-                print("  cg iter: " + "%2d"%(self.iter) + "; resid: " + "%4.6f"%(self.resid))
+                print("  cg iter: " + "%2d" % (self.iter) \
+                    + "; resid: " + "%4.6f" % (self.resid))
 
     def _done(self):
         return (self.iter >= self.max_iter or
@@ -592,7 +593,7 @@ class SDMM(Alg):
         M = len(self.L)
         with self.device:
             xp = self.device.xp
-            self.x = xp.zeros(self.A.ishape, dtype=np.complex).flatten()
+            self.x = xp.zeros(self.A.ishape, dtype=complex).flatten()
             self.x = xp.expand_dims(self.x, axis=1)
             self.z, self.u = [], []
 
