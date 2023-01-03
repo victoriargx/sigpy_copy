@@ -176,7 +176,7 @@ class LinearLeastSquares(App):
     """
     def __init__(self, A, y, x=None, proxg=None,
                  lamda=0, G=None, g=None, z=None,
-                 solver=None, max_iter=100,
+                 solver=None, max_iter=100, scale=1,
                  P=None, alpha=None, max_power_iter=30, accelerate=True,
                  tau=None, sigma=None,
                  rho=1, max_cg_iter=10, tol=0,
@@ -185,6 +185,7 @@ class LinearLeastSquares(App):
         self.A = A
         self.y = y
         self.x = x
+        self.scale = scale
         self.proxg = proxg
         self.lamda = lamda
         self.G = G
@@ -230,7 +231,7 @@ class LinearLeastSquares(App):
                     backend.to_device(self.alg.resid, backend.cpu_device)))
 
     def _output(self):
-        return self.x
+        return self.x * self.scale
 
     def _get_alg(self):
         if self.solver is None:
