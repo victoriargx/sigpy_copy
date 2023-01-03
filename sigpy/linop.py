@@ -6,7 +6,7 @@ such as reshape, transpose, and resize.
 """
 import numpy as np
 
-from sigpy import backend, block, fourier, util, interp, conv, wavelet
+from sigpy import backend, block, fourier, util, interp, conv, wavelet, nlop
 
 
 def _check_shape_positive(shape):
@@ -148,6 +148,8 @@ class Linop():
     def __mul__(self, input):
         if isinstance(input, Linop):
             return Compose([self, input])
+        elif isinstance(input, nlop.Nlop):
+            return nlop.Compose([self, input])
         elif np.isscalar(input):
             M = Multiply(self.ishape, input)
             return Compose([self, M])
