@@ -274,7 +274,7 @@ class ConjugateGradient(Alg):
 
             if self.verbose:
                 print("  cg iter: " + "%2d" % (self.iter)
-                      + "; resid: " + "%4.6f" % (self.resid))
+                      + "; resid: " + "%13.6f" % (self.resid))
 
     def _done(self):
         return (self.iter >= self.max_iter or
