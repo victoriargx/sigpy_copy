@@ -9,7 +9,7 @@ from sigpy.mri import epi
 __all__ = ['birdcage_maps', 'gradient_echoes', 'diffusion', 'get_subspace']
 
 
-def birdcage_maps(shape, r=1.5, nzz=8, dtype=np.complex):
+def birdcage_maps(shape, r=1.5, nzz=8, dtype=complex):
     """Simulates birdcage coil sensitivies.
 
     Args:
