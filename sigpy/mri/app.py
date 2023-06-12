@@ -18,6 +18,11 @@ def _estimate_weights(y, weights, coord, coil_dim=0):
             weights = (sp.rss(y, axes=(coil_dim, ),
                               keepdims=True) > 0).astype(y.dtype)
 
+    if weights is None and coord is not None:
+        with sp.get_device(y):
+            weights = (sp.rss(y, axes=(coil_dim, ),
+                              keepdims=True) > 0).astype(y.dtype)
+
     return weights
 
 
@@ -667,7 +672,8 @@ class HighDimensionalRecon(sp.app.LinearLeastSquares):
                  **kwargs):
 
         # k-space data in accordance with sigpy/mri/dims.py
-        Ntime, Necho, Ncoil, Nz, Ny, Nx = y.shape
+        Ntime, Necho, Ncoil, Nz = y.shape[:-2]
+        Ny, Nx = mps.shape[-2:]
 
         assert(1 == Nz)  # deal with collapsed y even for SMS
 
@@ -727,7 +733,6 @@ class HighDimensionalRecon(sp.app.LinearLeastSquares):
         #### parallel imaging modeling
 
         # only one set of coil sensitivity maps for all images
-        self._check_two_shape(list(y.shape[DIM_Y:]), mps.shape[DIM_Y:])
         assert(y.shape[DIM_COIL] == mps.shape[DIM_COIL])
 
         S = sp.linop.Multiply(P.oshape, mps)
@@ -735,7 +740,9 @@ class HighDimensionalRecon(sp.app.LinearLeastSquares):
 
         # FFT
         if coord is None:
+            self._check_two_shape(list(y.shape[DIM_Y:]), mps.shape[DIM_Y:])
             F = sp.linop.FFT(S.oshape, axes=range(-2, 0))
+
         else:
             F = sp.linop.HDNUFFT(S.oshape, coord)
 
